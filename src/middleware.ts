@@ -29,6 +29,37 @@ app.get(
  }
 )
 
+app.get(
+ "/admin",
+ () => ({
+   stats: 99
+ }),
+ {
+   beforeHandle({ headers, set }) {
+     if (headers.authorization !== "Bearer 123") {
+       set.status = 401
+       return {
+         success: false,
+         message: "Unauthorized"
+       }
+     }
+   }
+ }
+)
+// handler harus diletakkan sebelum route
+app.onAfterHandle(({ response }) => {
+ return {
+   success: true,
+   data: response
+ }
+})
+
+
+app.get("/profile", () => ({
+ name: "Nama kamu"
+}))
+
+
 
 app.listen(3000)
 console.log("Server running at http://localhost:3000")
