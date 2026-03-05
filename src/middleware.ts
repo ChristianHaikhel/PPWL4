@@ -63,44 +63,38 @@ app.get('/product', () => {
   return { id: 1, name: "Laptop" }
 })
 
-app.post(
- "/register",
- ({ body }) => body,
- {
-   body: t.Object({
-     name: t.String({ minLength: 3 }),
-     email: t.String({ format: "email" })
-   })
- }
-)
-
-
 app.onError(({ code, error, set }) => {
+  if (code === "VALIDATION") {
+    set.status = 400
+    return {
+      success: false,
+      error: "Validation Error"
+    }
+  }
 
+  if (code === "NOT_FOUND") {
+    set.status = 404
+    return {
+      error: "Route not found"
+    }
+  }
 
- if (code === "VALIDATION") {
-   set.status = 400
-   return {
-     success: false,
-     message: "Validation Error",
-     detail: error.message
-   }
- }
+  set.status = 500
+  return {
+    error: "Internal Server Error"
+  }
+  })
 
+app.post("/login",
+  ({ body }) => body,
+  {
+    body: t.Object({
+      email: t.String({ format: "email" }),
+      password: t.String({ minLength: 8 })
+    })
+  }
+  )
 
- if (code === "NOT_FOUND") {
-   set.status = 404
-   return {
-     message: "Route not found"
-   }
- }
-
-
- set.status = 500
- return {
-   message: "Internal Server Error"
- }
-})
 
 
 app.listen(3000)
