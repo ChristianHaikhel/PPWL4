@@ -41,6 +41,22 @@ const app = new Elysia()
   }    
   )
 
+    app.get(
+  "/stats",
+  () => {
+    return {
+      total: 12,
+      active: 10
+    }
+  },
+  {
+    response: t.Object({
+      total: t.Number(),
+      active : t.Number()
+    })
+  }
+)
+
   .listen(3000);
 
 console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`);
